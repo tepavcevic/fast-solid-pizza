@@ -9,7 +9,7 @@ export async function getMenu(): Promise<Array<Product>> {
   // fetch won't throw error on 400 errors (e.g. when URL is wrong), so we need to do it manually. This will then go into the catch block, where the message is set
   if (!res.ok) throw Error('Failed getting menu');
 
-  const { data } = await res.json();
+  const { data } = (await res.json()) as { data: Array<Product> };
   return data;
 }
 
@@ -17,7 +17,7 @@ export async function getOrder(id: string): Promise<Order> {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
-  const { data } = await res.json();
+  const { data } = (await res.json()) as { data: Order };
   return data;
 }
 
@@ -32,7 +32,7 @@ export async function createOrder(newOrder: Order): Promise<Product> {
     });
 
     if (!res.ok) throw Error();
-    const { data } = await res.json();
+    const { data } = (await res.json()) as { data: Product };
     return data;
   } catch {
     throw Error('Failed creating your order');

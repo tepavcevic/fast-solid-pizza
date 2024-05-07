@@ -1,11 +1,11 @@
 import { A } from '@solidjs/router';
-import { formatCurrency } from '../../utils/helpers';
 import { useStore } from '@nanostores/solid';
-import { getTotalCartPrice, getTotalCartQuantity } from '../../store/cart';
 import { Show } from 'solid-js';
+import { formatCurrency } from '../../utils/helpers';
+import { getTotalCartPrice, getTotalCartQuantity } from '../../store/cart';
 
 function CartOverview() {
-  const totalCartPrice = useStore(getTotalCartPrice)
+  const totalCartPrice = useStore(getTotalCartPrice);
   const totalCartQuantity = useStore(getTotalCartQuantity);
 
   return (

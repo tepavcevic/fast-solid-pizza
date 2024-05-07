@@ -1,5 +1,6 @@
-import { Location } from '~/types/location';
+import { Location } from '../types/location';
 
+// eslint-disable-next-line import/prefer-default-export
 export async function getAddress({
   latitude,
   longitude,
@@ -12,6 +13,6 @@ export async function getAddress({
   );
   if (!res.ok) throw Error('Failed getting address');
 
-  const data = await res.json();
+  const data = (await res.json()) as Location;
   return data;
 }

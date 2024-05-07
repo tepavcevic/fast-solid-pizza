@@ -1,4 +1,4 @@
-import { Show } from 'solid-js';
+import { Show, createEffect, createSignal } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import Button from '../../components/button';
 import { formatCurrency } from '../../utils/helpers';
@@ -8,7 +8,11 @@ import DeleteItem from '../cart/delete-item';
 import UpdateItemQuantity from '../cart/update-item-quantity';
 
 function MenuItem(props: { pizza: Product }) {
-  const currentQuantity = useStore(getCurrentQuantityById(props.pizza.id));
+  const [currentQuantity, setCurrentQuantity] = createSignal(0);
+  createEffect(() => {
+    const currentQ = useStore(getCurrentQuantityById(props.pizza.id));
+    setCurrentQuantity(currentQ());
+  });
 
   const handleAddToCart = () => {
     const newCartItem = {
@@ -35,19 +39,29 @@ function MenuItem(props: { pizza: Product }) {
           {props.pizza.ingredients.join(', ')}
         </p>
         <div class="mt-auto flex items-center justify-between">
-
-          <Show when={props.pizza.soldOut} fallback={<p class="text-sm">{formatCurrency(props.pizza.unitPrice)}</p>}>
-            <p class="text-sm font-medium uppercase text-stone-500">
-              Sold out
-            </p>
+          <Show
+            when={props.pizza.soldOut}
+            fallback={
+              <p class="text-sm">{formatCurrency(props.pizza.unitPrice)}</p>
+            }
+          >
+            <p class="text-sm font-medium uppercase text-stone-500">Sold out</p>
           </Show>
 
           <Show when={!props.pizza.soldOut}>
-            <Show when={currentQuantity() > 0} fallback={<Button type="small" onClick={handleAddToCart}>
-              Add to cart
-            </Button>}>
+            <Show
+              when={currentQuantity() > 0}
+              fallback={
+                <Button type="small" onClick={handleAddToCart}>
+                  Add to cart
+                </Button>
+              }
+            >
               <div class="flex items-center gap-3 sm:gap-8">
-                <UpdateItemQuantity id={props.pizza.id} currentQuantity={currentQuantity()} />
+                <UpdateItemQuantity
+                  id={props.pizza.id}
+                  currentQuantity={currentQuantity()}
+                />
                 <DeleteItem id={props.pizza.id} />
               </div>
             </Show>

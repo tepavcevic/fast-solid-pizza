@@ -1,5 +1,5 @@
-import { atom, task } from "nanostores";
-import { getAddress } from "../services/apiGeocoding";
+import { atom } from 'nanostores';
+// import { getAddress } from '../services/apiGeocoding';
 
 export type UserState = {
   username: string;
@@ -15,13 +15,13 @@ export const user = atom<UserState>({
   position: { latitude: undefined, longitude: undefined },
   address: '',
   error: '',
-})
+});
 
-function getPosition(): Promise<GeolocationPosition> {
-  return new Promise(function (resolve, reject) {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
-  });
-}
+// function getPosition(): Promise<GeolocationPosition> {
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// }
 
 export type FetchAddressType = {
   position: { latitude: number; longitude: number };
@@ -49,5 +49,4 @@ export type FetchAddressType = {
 
 export const updateName = (name: string) => {
   user.set({ ...user.get(), username: name });
-
-}
+};

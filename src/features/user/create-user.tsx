@@ -1,4 +1,3 @@
-
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 
@@ -14,7 +13,7 @@ function CreateUser() {
 
     if (!username()) return;
     updateName(username());
-    // navigate('/menu');
+    navigate('/menu');
   }
 
   return (

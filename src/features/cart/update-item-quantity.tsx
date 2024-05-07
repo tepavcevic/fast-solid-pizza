@@ -1,5 +1,8 @@
 import Button from '../../components/button';
-import { decreaseCartItemQuantity, increaseCartItemQuantity } from '../../store/cart';
+import {
+  decreaseCartItemQuantity,
+  increaseCartItemQuantity,
+} from '../../store/cart';
 
 export default function UpdateItemQuantity(props: {
   id: number;

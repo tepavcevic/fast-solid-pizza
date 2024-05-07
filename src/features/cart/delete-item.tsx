@@ -1,8 +1,8 @@
 import Button from '../../components/button';
 import { removeFromCart } from '../../store/cart';
 
-export default function DeleteItem({ id }: { id: number }) {
- const handleDeleteItem = () => removeFromCart(id);
+export default function DeleteItem(props: { id: number }) {
+  const handleDeleteItem = () => removeFromCart(props.id);
 
   return (
     <Button type="small" onClick={handleDeleteItem}>
