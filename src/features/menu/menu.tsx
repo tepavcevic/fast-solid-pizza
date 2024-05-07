@@ -1,3 +1,4 @@
+import { For } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 
 import MenuItem from './menu-item';
@@ -9,9 +10,9 @@ function Menu() {
 
   return (
     <ul class="divide-y divide-stone-200 px-2">
-      {menu().map((pizza: Product) => (
-        <MenuItem pizza={pizza} />
-      ))}
+      <For each={menu()}>
+        { (pizza: Product) => (<MenuItem pizza={pizza} />) }
+      </For>
     </ul>
   );
 }
