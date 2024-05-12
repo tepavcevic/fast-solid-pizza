@@ -38,27 +38,6 @@
     {
       "files": [
         "**/*.{ts,tsx}"
-      ],
-      "plugins": [
-        "@typescript-eslint",
-        "import"
-      ],
-      "parser": "@typescript-eslint/parser",
-      "settings": {
-        "import/resolver": {
-          "node": {
-            "extensions": [
-              ".ts",
-              ".tsx"
-            ]
-          },
-          "typescript": {
-            "alwaysTryTypes": true
-          }
-        }
-      },
-      "extends": [
-        "plugin:@typescript-eslint/recommended"
       ]
     }
   ]

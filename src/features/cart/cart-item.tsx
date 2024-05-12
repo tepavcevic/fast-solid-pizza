@@ -1,9 +1,10 @@
 import { useStore } from '@nanostores/solid';
+
+import { getCurrentQuantityById } from '../../store/cart';
+import { CartItem as CartItemType } from '../../types/order';
 import { formatCurrency } from '../../utils/helpers';
 import DeleteItem from './delete-item';
 import UpdateItemQuantity from './update-item-quantity';
-import { getCurrentQuantityById } from '../../store/cart';
-import { CartItem as CartItemType } from '../../types/order';
 
 function CartItem(props: { item: CartItemType }) {
   const currentQuantity = useStore(getCurrentQuantityById(props.item.pizzaId));
