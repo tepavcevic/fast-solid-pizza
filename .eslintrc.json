@@ -14,19 +14,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": [
-      "./tsconfig.json"
-    ]
+    "project": ["./tsconfig.json"]
   },
-  "plugins": [
-    "@typescript-eslint",
-    "solid"
-  ],
+  "plugins": ["@typescript-eslint", "solid"],
   "rules": {
-    "import/extensions": [
-      "error",
-      "never"
-    ],
+    "import/extensions": ["error", "never"],
     "prettier/prettier": [
       "error",
       {
@@ -36,9 +28,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.{ts,tsx}"
-      ]
+      "files": ["**/*.{ts,tsx}"]
     }
   ]
 }

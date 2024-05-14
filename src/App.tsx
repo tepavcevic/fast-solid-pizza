@@ -6,6 +6,8 @@ import Home from './components/home';
 import Menu from './features/menu/menu';
 import menuData from './features/menu/menu.data';
 import Cart from './features/cart/cart';
+import Order from './features/order/[orderId]';
+import orderData from './features/order/[orderId].data';
 
 const App: Component = () => {
   return (
@@ -13,6 +15,7 @@ const App: Component = () => {
       <Route path="/" component={Home} />
       <Route path="/menu" component={Menu} load={menuData} />
       <Route path="/cart" component={Cart} />
+      <Route path="/order:orderId" component={Order} load={orderData} />
       <Route path="*" />
     </Router>
   );

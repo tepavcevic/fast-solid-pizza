@@ -14,13 +14,13 @@ export const getMenu = cache(async () => {
   return data;
 }, 'menu');
 
-export async function getOrder(id: string): Promise<Order> {
+export const getOrder = cache(async (id: string): Promise<Order> => {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
   const { data } = (await res.json()) as { data: Order };
   return data;
-}
+}, 'order');
 
 export async function createOrder(newOrder: Order): Promise<Product> {
   try {
