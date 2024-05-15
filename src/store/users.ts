@@ -7,6 +7,7 @@ export type UserState = {
   position: { latitude: number | undefined; longitude: number | undefined };
   address: string;
   error: string;
+  addressStatus: 'idle' | 'loading' | 'error';
 };
 
 export const user = atom<UserState>({
@@ -15,6 +16,7 @@ export const user = atom<UserState>({
   position: { latitude: undefined, longitude: undefined },
   address: '',
   error: '',
+  addressStatus: 'idle',
 });
 
 // function getPosition(): Promise<GeolocationPosition> {

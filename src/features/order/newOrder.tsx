@@ -1,23 +1,20 @@
-import { redirect } from '@solidjs/router';
-import { useFormHandler, Field } from 'solid-form-handler';
+import { Field, useFormHandler } from 'solid-form-handler';
 import { zodSchema } from 'solid-form-handler/zod';
 import { z } from 'zod';
+import { useStore } from '@nanostores/solid';
+import { redirect, useIsRouting } from '@solidjs/router';
+import { Show, createEffect, createSignal, onMount } from 'solid-js';
 
-import Button from '../../components/button';
 import Loader from '../../components/loader';
-import NavigationDialog from '../../components/navigation-dialog';
-import EmptyCart from '../../features/cart/empty-cart';
-import { fetchAddress } from '../../features/user/userSlice';
-import { createOrder } from '../../services/apiRestaurant';
+import Button from '../../components/button';
 import {
   clearCart,
-  cart as storeCart,
   getTotalCartPrice,
+  cart as storeCart,
 } from '../../store/cart';
-import { user } from '../../store/users';
+import { user as storeUser } from '../../store/users';
 import { formatCurrency } from '../../utils/helpers';
-import { Show, createEffect } from 'solid-js';
-import { useStore } from '@nanostores/solid';
+import { CartItem, Order } from '../../types/order';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -43,174 +40,207 @@ const OrderSchema = z.object({
     .min(3, { message: 'Minimum length of 3' })
     .max(50, { message: 'Maximum length of 70' }),
   position: z.string().optional(),
-  cart: z.string(),
   priority: z.boolean().optional(),
 });
 
-export async function clientAction({ request }: ClientActionFunctionArgs) {
-  const formData = await request.formData();
+function NewOrder() {
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const isRouting = useIsRouting();
 
-  const submission = await parseWithZod(formData, {
-    schema: OrderSchema,
-    async: true,
-  });
-
-  if (submission.status !== 'success') return submission.reply();
-  if (!submission.value) return null;
-
-  const order = {
-    ...submission.value,
-    cart: JSON.parse(submission.value.cart),
-    position: submission.value.position ?? '',
-    priority: submission.payload?.priority ? true : false,
-  };
-
-  // If everything is okay, create new order and redirect
-  const newOrder = await createOrder(order);
-
-  store.dispatch(clearCart());
-
-  return redirect(`/order/${newOrder.id}`);
-}
-
-export const meta: MetaFunction = () => {
-  return [{ title: 'Order | Fast React Pizza Co.' }];
-};
-
-function CreateOrder() {
-  const {
-    username,
-    status: addressStatus,
-    position,
-    address,
-    error: errorAddress,
-  } = useStore(user);
-  const isLoadingAddress = addressStatus === 'loading';
-
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
-
-  const lastSubmit = useActionData<typeof clientAction>();
+  const user = useStore(storeUser);
+  const isLoadingAddress = user().addressStatus === 'loading';
 
   const formHandler = useFormHandler(zodSchema(OrderSchema), {
-    validateOn: ['blur'],
+    validateOn: ['blur', 'input'],
   });
   const { formData } = formHandler;
 
-  createEffect(() => {
-    if (username) {
-      formHandler.fillForm({ customer: username });
-    }
+  onMount(() => {
+    // eslint-disable-next-line no-void
+    void formHandler.setFieldDefaultValue('customer', user().username);
+    // eslint-disable-next-line no-void
+    void formHandler.setFieldDefaultValue('priority', false);
   });
 
   const cart = useStore(storeCart);
-  const totalCartPrice = useAppSelector(getTotalCartPrice);
-  const priorityPrice = form.value?.priority ? totalCartPrice * 0.2 : 0;
-  const totalPrice = totalCartPrice + priorityPrice;
+  const totalCartPrice = useStore(getTotalCartPrice);
 
-  if (navigation.state === 'loading') return <Loader />;
+  const [totalPrice, setTotalPrice] = createSignal(totalCartPrice());
+  createEffect(() => {
+    const priorityPrice = formHandler.getFieldValue('priority')
+      ? totalCartPrice() * 0.2
+      : 0;
+    setTotalPrice(totalCartPrice() + priorityPrice);
+  });
 
-  if (!cart.length && navigation.state === 'idle') return <EmptyCart />;
+  async function onSubmit(event: Event) {
+    setIsSubmitting(true);
+    event.preventDefault();
+
+    try {
+      await formHandler.validateForm();
+
+      await new Promise((resolve) => setTimeout(() => resolve(), 2000));
+
+      const order = {
+        ...JSON.parse(JSON.stringify(formData())),
+        cart: JSON.parse(JSON.stringify(cart())) as Array<CartItem>,
+        position:
+          user().position.latitude && user().position.longitude
+            ? `${user().position.latitude},${user().position.longitude}`
+            : '',
+        priority: Boolean(formHandler.getFieldValue('priority')),
+      } as Order;
+
+      console.log(order);
+      setIsSubmitting(false);
+      await formHandler.resetForm();
+
+      //   const newOrder = await createOrder(order);
+
+      clearCart();
+
+      // redirect(`/order/${newOrder.id}`);
+    } catch (error) {
+      setIsSubmitting(false);
+      console.log(error);
+    }
+    // console.log(JSON.stringify([formData(), cart()]));
+  }
+
+  // if (!cart.length && navigation.state === 'idle') return <EmptyCart />;
 
   return (
-    <div class="px-4 py-6">
-      <h2 class="mb-8 text-xl font-semibold">Ready to order? Let&apos;s go!</h2>
+    <Show when={!isRouting()} fallback={<Loader />}>
+      <div class="px-4 py-6">
+        <h2 class="mb-8 text-xl font-semibold">
+          Ready to order? Let&apos;s go!
+        </h2>
 
-      {/* <Form method="POST" action="/order/new"> */}
-      <form>
-        <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Field
-            mode="input"
-            name="customer"
-            formHandler={formHandler}
-            render={(field) => (
-              <>
-                <label for={field.props.id} class="sm:basis-40">
-                  First Name
-                </label>
-                <div class="flex flex-col grow">
-                  <input
-                    {...field.props}
-                    class="input grow"
-                    disabled={isSubmitting}
-                    required
-                  />
-                  <Show when={field.helpers.error}>
-                    <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                      {field.helpers.errorMessage}
-                    </p>
+        {/* <Form method="POST" action="/order/new"> */}
+        <form onSubmit={onSubmit}>
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Field
+              mode="input"
+              name="customer"
+              formHandler={formHandler}
+              render={(field) => (
+                <>
+                  <label for={field.props.id} class="sm:basis-40">
+                    First Name
+                  </label>
+                  <div class="flex flex-col grow">
+                    <input
+                      {...field.props}
+                      class="input grow"
+                      disabled={isSubmitting()}
+                    />
+                    <Show when={field.helpers.error}>
+                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                        {field.helpers.errorMessage}
+                      </p>
+                    </Show>
+                  </div>
+                </>
+              )}
+            />
+          </div>
+
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Field
+              mode="input"
+              name="phone"
+              formHandler={formHandler}
+              render={(field) => (
+                <>
+                  <label for={field.props.id} class="sm:basis-40">
+                    Phone number
+                  </label>
+                  <div class="grow">
+                    <input
+                      {...field.props}
+                      type="tel"
+                      class="input w-full"
+                      disabled={isSubmitting()}
+                    />
+                    <Show when={field.helpers.error}>
+                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                        {field.helpers.errorMessage}
+                      </p>
+                    </Show>
+                  </div>
+                </>
+              )}
+            />
+          </div>
+
+          <div class="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Field
+              mode="input"
+              name="address"
+              formHandler={formHandler}
+              render={(field) => (
+                <>
+                  <label for={field.props.id} class="sm:basis-40">
+                    Address
+                  </label>
+                  <div class="grow">
+                    <input
+                      {...field.props}
+                      class="input w-full"
+                      disabled={isLoadingAddress || isSubmitting()}
+                    />
+                    <Show when={field.helpers.error}>
+                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                        {field.helpers.errorMessage}
+                      </p>
+                    </Show>
+                  </div>
+                  <Show
+                    when={
+                      !user().position?.latitude && !user().position?.longitude
+                    }
+                  >
+                    <span class="absolute right-[3px] top-[35px] z-50 sm:top-[3px] md:top-[5px]">
+                      <Button
+                        variant="small"
+                        onClick={() => {
+                          // dispatch(fetchAddress());
+                        }}
+                        disabled={isLoadingAddress || isSubmitting()}
+                      >
+                        Get positionn
+                      </Button>
+                    </span>
                   </Show>
-                </div>
-              </>
-            )}
-          />
-        </div>
-
-        <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label for={fields.phone.id} class="sm:basis-40">
-            Phone number
-          </label>
-          <div class="grow">
-            <input
-              {...getInputProps(fields.phone, { type: 'tel' })}
-              class="input w-full"
-              disabled={isSubmitting}
-              required
+                </>
+              )}
             />
-            {fields.phone.errors && (
-              <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                {fields.phone.errors}
-              </p>
-            )}
           </div>
-        </div>
 
-        <div class="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label for={fields.address.id} class="sm:basis-40">
-            Address
-          </label>
-          <div class="grow">
-            <input
-              {...getInputProps(fields.address, { type: 'text' })}
-              class="input w-full"
-              defaultValue={address}
-              disabled={isLoadingAddress || isSubmitting}
-              required
+          <div class="mb-12 flex items-center gap-5">
+            <Field
+              mode="checkbox"
+              name="priority"
+              formHandler={formHandler}
+              render={(field) => (
+                <>
+                  <input
+                    class="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
+                    {...field.props}
+                    disabled={isSubmitting()}
+                    type="checkbox"
+                  />
+                  <label for={field.props.id} class="font-medium">
+                    Want to yo give your order priority?
+                  </label>
+                </>
+              )}
             />
-            {addressStatus === 'error' && (
-              <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                {errorAddress}
-              </p>
-            )}
           </div>
-          {!position.latitude && !position.longitude && (
-            <span class="absolute right-[3px] top-[35px] z-50 sm:top-[3px] md:top-[5px]">
-              <Button
-                type="small"
-                onClick={() => {
-                  dispatch(fetchAddress());
-                }}
-                disabled={isLoadingAddress || isSubmitting}
-              >
-                Get position
-              </Button>
-            </span>
-          )}
-        </div>
 
-        <div class="mb-12 flex items-center gap-5">
-          <input
-            class="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
-            {...getInputProps(fields.priority, { type: 'checkbox' })}
-            disabled={isSubmitting}
-          />
-          <label for={fields.priority.id} class="font-medium">
-            Want to yo give your order priority?
-          </label>
-        </div>
-
-        <div>
-          <input
+          <div>
+            {/* <input
             {...getInputProps(fields.cart, {
               type: 'hidden',
             })}
@@ -225,21 +255,30 @@ function CreateOrder() {
                 ? `${position.latitude},${position.longitude}`
                 : ''
             }
-          />
+          /> */}
 
-          <Button disabled={isSubmitting || isLoadingAddress} type="primary">
-            {isSubmitting
-              ? 'Placing order....'
-              : `Order now from ${formatCurrency(totalPrice)}`}
-          </Button>
-        </div>
+            <Button
+              disabled={
+                isSubmitting() ||
+                isLoadingAddress ||
+                formHandler.isFormInvalid()
+              }
+              variant="primary"
+              type="submit"
+            >
+              {isSubmitting()
+                ? 'Placing order....'
+                : `Order now from ${formatCurrency(totalPrice())}`}
+            </Button>
+          </div>
 
-        {blocker.state === 'blocked' ? (
+          {/* {blocker.state === 'blocked' ? (
           <NavigationDialog blocker={blocker} />
-        ) : null}
-      </form>
-    </div>
+        ) : null} */}
+        </form>
+      </div>
+    </Show>
   );
 }
 
-export default CreateOrder;
+export default NewOrder;

@@ -15,13 +15,17 @@ const styles = {
 const Button: ParentComponent<{
   disabled?: boolean;
   to?: string;
-  type?: keyof typeof styles;
+  variant?: keyof typeof styles;
   onClick?: () => void;
+  type?: 'button' | 'reset' | 'submit';
 }> = (props) => {
   return (
     <>
       <Show when={props.to} fallback={null}>
-        <A href={props.to ?? '#'} class={props.type && styles[props.type]}>
+        <A
+          href={props.to ?? '#'}
+          class={props.variant && styles[props.variant]}
+        >
           {props.children}
         </A>
       </Show>
@@ -29,8 +33,9 @@ const Button: ParentComponent<{
       <Show when={props.onClick} fallback={null}>
         <button
           disabled={props.disabled}
-          class={props.type ? styles[props.type] : base}
+          class={props.variant ? styles[props.variant] : base}
           onClick={() => props.onClick?.()}
+          type={props.type ? props.type : 'button'}
         >
           {props.children}
         </button>
@@ -39,7 +44,7 @@ const Button: ParentComponent<{
       <Show when={!props.to && !props.onClick}>
         <button
           disabled={props.disabled}
-          class={props.type && styles[props.type]}
+          class={props.variant && styles[props.variant]}
         >
           {props.children}
         </button>

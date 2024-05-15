@@ -107,7 +107,7 @@ function Order(props: { params: Params }) {
 
       {!priority && (
         <div class="text-end">
-          <Button type="primary" disabled={isMakingPriority}>
+          <Button variant="primary" disabled={isMakingPriority}>
             {isMakingPriority ? 'Making Priority...' : 'Make Priority'}
           </Button>
         </div>

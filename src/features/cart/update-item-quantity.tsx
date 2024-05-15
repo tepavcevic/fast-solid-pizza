@@ -12,11 +12,11 @@ export default function UpdateItemQuantity(props: {
   const handleDecreaseQuantity = () => decreaseCartItemQuantity(props.id);
   return (
     <div class="flex items-center gap-1 md:gap-3">
-      <Button type="round" onClick={handleDecreaseQuantity}>
+      <Button variant="round" onClick={handleDecreaseQuantity}>
         -
       </Button>
       <span class="text-sm font-medium">{props.currentQuantity}</span>
-      <Button type="round" onClick={handleIncreaseQuantity}>
+      <Button variant="round" onClick={handleIncreaseQuantity}>
         +
       </Button>
     </div>

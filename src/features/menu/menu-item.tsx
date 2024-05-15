@@ -52,7 +52,7 @@ function MenuItem(props: { pizza: Product }) {
             <Show
               when={currentQuantity() > 0}
               fallback={
-                <Button type="small" onClick={handleAddToCart}>
+                <Button variant="small" onClick={handleAddToCart}>
                   Add to cart
                 </Button>
               }

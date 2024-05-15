@@ -31,11 +31,11 @@ function Cart() {
         </ul>
 
         <div class="mt-10 space-x-2">
-          <Button type="primary" to="/order/new">
+          <Button variant="primary" to="/order/new">
             Order pizzas
           </Button>
 
-          <Button type="secondary" onClick={handleClearCart}>
+          <Button variant="secondary" onClick={handleClearCart}>
             Clear cart
           </Button>
         </div>

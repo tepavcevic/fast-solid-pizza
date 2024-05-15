@@ -1,13 +1,16 @@
 import { For, Suspense } from 'solid-js';
-import { useStore } from '@nanostores/solid';
 
+import { createAsyncStore } from '@solidjs/router';
+import { getMenu } from '../../services/apiRestaurant';
 import Loader from '../../components/loader';
-import { menu as storeMenu } from '../../store/menu';
 import { Product } from '../../types/products';
 import MenuItem from './menu-item';
 
 function Menu() {
-  const menu = useStore(storeMenu);
+  const menu = createAsyncStore(() => getMenu(), {
+    initialValue: [],
+    name: 'menu',
+  });
 
   return (
     <Suspense fallback={<Loader />}>

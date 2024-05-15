@@ -20,7 +20,7 @@ const Home = () => {
       {!storedUser().username ? (
         <CreateUser />
       ) : (
-        <Button type="primary" to="/menu">
+        <Button variant="primary" to="/menu">
           Continue ordering, {storedUser().username}
         </Button>
       )}
