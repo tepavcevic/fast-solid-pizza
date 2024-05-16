@@ -2,7 +2,7 @@ import { Field, useFormHandler } from 'solid-form-handler';
 import { zodSchema } from 'solid-form-handler/zod';
 import { z } from 'zod';
 import { useStore } from '@nanostores/solid';
-import { redirect, useIsRouting } from '@solidjs/router';
+import { useIsRouting, useNavigate } from '@solidjs/router';
 import { Show, createEffect, createSignal, onMount } from 'solid-js';
 
 import Loader from '../../components/loader';
@@ -15,6 +15,7 @@ import {
 import { user as storeUser } from '../../store/users';
 import { formatCurrency } from '../../utils/helpers';
 import { CartItem, Order } from '../../types/order';
+import { createOrder } from '../../services/apiRestaurant';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -40,12 +41,33 @@ const OrderSchema = z.object({
     .min(3, { message: 'Minimum length of 3' })
     .max(50, { message: 'Maximum length of 70' }),
   position: z.string().optional(),
+  // cart: z.string(),
   priority: z.boolean().optional(),
 });
+
+// const createOrder = action(async (data: FormData) => {
+//   const submission = await OrderSchema.safeParseAsync(data, { async: true });
+
+//   if (!submission.success) throw new Error('Invalid form, whatever');
+
+//   const order = {
+//     ...submission.data,
+//     cart: JSON.parse(submission.data.cart) as Array<CartItem>,
+//     position: submission.data.position ?? '',
+//     priority: Boolean(submission.data?.priority),
+//   };
+
+//   const newOrder = await createOrder(order);
+
+//   clearCart();
+
+//   throw redirect(`/order/${newOrder.id}`);
+// });
 
 function NewOrder() {
   const [isSubmitting, setIsSubmitting] = createSignal(false);
   const isRouting = useIsRouting();
+  const navigate = useNavigate();
 
   const user = useStore(storeUser);
   const isLoadingAddress = user().addressStatus === 'loading';
@@ -80,8 +102,6 @@ function NewOrder() {
     try {
       await formHandler.validateForm();
 
-      await new Promise((resolve) => setTimeout(() => resolve(), 2000));
-
       const order = {
         ...JSON.parse(JSON.stringify(formData())),
         cart: JSON.parse(JSON.stringify(cart())) as Array<CartItem>,
@@ -93,17 +113,20 @@ function NewOrder() {
       } as Order;
 
       console.log(order);
-      setIsSubmitting(false);
       await formHandler.resetForm();
 
-      //   const newOrder = await createOrder(order);
+      const newOrder = await createOrder(order);
+
+      console.log(newOrder);
 
       clearCart();
 
-      // redirect(`/order/${newOrder.id}`);
+      setIsSubmitting(false);
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      navigate(`/order/${newOrder.id}`);
     } catch (error) {
       setIsSubmitting(false);
-      console.log(error);
+      console.error(error);
     }
     // console.log(JSON.stringify([formData(), cart()]));
   }
@@ -240,22 +263,25 @@ function NewOrder() {
           </div>
 
           <div>
-            {/* <input
-            {...getInputProps(fields.cart, {
-              type: 'hidden',
-            })}
-            value={JSON.stringify(cart)}
-          />
-          <input
-            {...getInputProps(fields.position, {
-              type: 'hidden',
-            })}
-            value={
-              position.latitude && position.longitude
-                ? `${position.latitude},${position.longitude}`
-                : ''
-            }
-          /> */}
+            {/* <Field
+              mode="input"
+              name="cart"
+              value={JSON.stringify(cart())}
+              formHandler={formHandler}
+              render={(field) => <input {...field.props} type="hidden" />}
+            />
+
+            <Field
+              mode="input"
+              name="position"
+              value={
+                user().position.latitude && user().position.longitude
+                  ? `${user().position.latitude},${user().position.longitude}`
+                  : ''
+              }
+              formHandler={formHandler}
+              render={(field) => <input {...field.props} type="hidden" />}
+            /> */}
 
             <Button
               disabled={

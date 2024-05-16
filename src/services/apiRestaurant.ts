@@ -1,5 +1,5 @@
 import { cache } from '@solidjs/router';
-import { Order } from '../types/order';
+import { Order, OrderView } from '../types/order';
 import { Product } from '../types/products';
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
@@ -14,13 +14,13 @@ export const getMenu = cache(async () => {
   return data;
 }, 'menu');
 
-export const getOrder = cache(async (id: string): Promise<Order> => {
+export const getOrder = cache(async (id: string): Promise<OrderView> => {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
-  const { data } = (await res.json()) as { data: Order };
+  const { data } = (await res.json()) as { data: OrderView };
   return data;
-}, 'order');
+}, 'orderView');
 
 export async function createOrder(newOrder: Order): Promise<Product> {
   try {
