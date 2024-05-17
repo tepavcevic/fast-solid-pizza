@@ -95,40 +95,38 @@ function NewOrder() {
     setTotalPrice(totalCartPrice() + priorityPrice);
   });
 
-  async function onSubmit(event: Event) {
+  function onSubmit(event: Event) {
     setIsSubmitting(true);
     event.preventDefault();
 
     try {
-      await formHandler.validateForm();
+      // eslint-disable-next-line no-void
+      void formHandler.validateForm().then(() => {
+        const order = {
+          ...JSON.parse(JSON.stringify(formData())),
+          cart: JSON.parse(JSON.stringify(cart())) as Array<CartItem>,
+          position:
+            user().position.latitude && user().position.longitude
+              ? `${user().position.latitude},${user().position.longitude}`
+              : '',
+          priority: Boolean(formHandler.getFieldValue('priority')),
+        } as Order;
 
-      const order = {
-        ...JSON.parse(JSON.stringify(formData())),
-        cart: JSON.parse(JSON.stringify(cart())) as Array<CartItem>,
-        position:
-          user().position.latitude && user().position.longitude
-            ? `${user().position.latitude},${user().position.longitude}`
-            : '',
-        priority: Boolean(formHandler.getFieldValue('priority')),
-      } as Order;
-
-      console.log(order);
-      await formHandler.resetForm();
-
-      const newOrder = await createOrder(order);
-
-      console.log(newOrder);
-
-      clearCart();
-
-      setIsSubmitting(false);
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      navigate(`/order/${newOrder.id}`);
+        // eslint-disable-next-line no-void
+        void formHandler.resetForm().then(() => {
+          // eslint-disable-next-line no-void
+          void createOrder(order).then((newOrder) => {
+            clearCart();
+            setIsSubmitting(false);
+            navigate(`/order/${newOrder.id}`);
+          });
+        });
+      });
     } catch (error) {
       setIsSubmitting(false);
+      // eslint-disable-next-line no-console
       console.error(error);
     }
-    // console.log(JSON.stringify([formData(), cart()]));
   }
 
   // if (!cart.length && navigation.state === 'idle') return <EmptyCart />;
@@ -232,7 +230,7 @@ function NewOrder() {
                         }}
                         disabled={isLoadingAddress || isSubmitting()}
                       >
-                        Get positionn
+                        Get position
                       </Button>
                     </span>
                   </Show>
