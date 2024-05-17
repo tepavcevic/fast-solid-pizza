@@ -17,6 +17,7 @@ import { user as storeUser } from '../../store/users';
 import { formatCurrency } from '../../utils/helpers';
 import { CartItem, Order } from '../../types/order';
 import { createOrder } from '../../services/apiRestaurant';
+import EmptyCart from '../cart/empty-cart';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -67,7 +68,6 @@ const OrderSchema = z.object({
 
 function NewOrder() {
   const [isSubmitting, setIsSubmitting] = createSignal(false);
-  const isRouting = useIsRouting();
   const navigate = useNavigate();
 
   const user = useStore(storeUser);
@@ -130,140 +130,140 @@ function NewOrder() {
     }
   }
 
-  // if (!cart.length && navigation.state === 'idle') return <EmptyCart />;
-
   return (
     <>
       <Title>Order | Fast Solid Pizza Co.</Title>
-      <div class="px-4 py-6">
-        <h2 class="mb-8 text-xl font-semibold">
-          Ready to order? Let&apos;s go!
-        </h2>
+      <Show when={cart().length} fallback={<EmptyCart />}>
+        <div class="px-4 py-6">
+          <h2 class="mb-8 text-xl font-semibold">
+            Ready to order? Let&apos;s go!
+          </h2>
 
-        {/* <Form method="POST" action="/order/new"> */}
-        <form onSubmit={onSubmit}>
-          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Field
-              mode="input"
-              name="customer"
-              formHandler={formHandler}
-              render={(field) => (
-                <>
-                  <label for={field.props.id} class="sm:basis-40">
-                    First Name
-                  </label>
-                  <div class="flex flex-col grow">
-                    <input
-                      {...field.props}
-                      class="input grow"
-                      disabled={isSubmitting()}
-                    />
-                    <Show when={field.helpers.error}>
-                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                        {field.helpers.errorMessage}
-                      </p>
-                    </Show>
-                  </div>
-                </>
-              )}
-            />
-          </div>
+          {/* <Form method="POST" action="/order/new"> */}
+          <form onSubmit={onSubmit}>
+            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Field
+                mode="input"
+                name="customer"
+                formHandler={formHandler}
+                render={(field) => (
+                  <>
+                    <label for={field.props.id} class="sm:basis-40">
+                      First Name
+                    </label>
+                    <div class="flex flex-col grow">
+                      <input
+                        {...field.props}
+                        class="input grow"
+                        disabled={isSubmitting()}
+                      />
+                      <Show when={field.helpers.error}>
+                        <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                          {field.helpers.errorMessage}
+                        </p>
+                      </Show>
+                    </div>
+                  </>
+                )}
+              />
+            </div>
 
-          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Field
-              mode="input"
-              name="phone"
-              formHandler={formHandler}
-              render={(field) => (
-                <>
-                  <label for={field.props.id} class="sm:basis-40">
-                    Phone number
-                  </label>
-                  <div class="grow">
-                    <input
-                      {...field.props}
-                      type="tel"
-                      class="input w-full"
-                      disabled={isSubmitting()}
-                    />
-                    <Show when={field.helpers.error}>
-                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                        {field.helpers.errorMessage}
-                      </p>
-                    </Show>
-                  </div>
-                </>
-              )}
-            />
-          </div>
+            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Field
+                mode="input"
+                name="phone"
+                formHandler={formHandler}
+                render={(field) => (
+                  <>
+                    <label for={field.props.id} class="sm:basis-40">
+                      Phone number
+                    </label>
+                    <div class="grow">
+                      <input
+                        {...field.props}
+                        type="tel"
+                        class="input w-full"
+                        disabled={isSubmitting()}
+                      />
+                      <Show when={field.helpers.error}>
+                        <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                          {field.helpers.errorMessage}
+                        </p>
+                      </Show>
+                    </div>
+                  </>
+                )}
+              />
+            </div>
 
-          <div class="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Field
-              mode="input"
-              name="address"
-              formHandler={formHandler}
-              render={(field) => (
-                <>
-                  <label for={field.props.id} class="sm:basis-40">
-                    Address
-                  </label>
-                  <div class="grow">
-                    <input
-                      {...field.props}
-                      class="input w-full"
-                      disabled={isLoadingAddress || isSubmitting()}
-                    />
-                    <Show when={field.helpers.error}>
-                      <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
-                        {field.helpers.errorMessage}
-                      </p>
-                    </Show>
-                  </div>
-                  <Show
-                    when={
-                      !user().position?.latitude && !user().position?.longitude
-                    }
-                  >
-                    <span class="absolute right-[3px] top-[35px] z-50 sm:top-[3px] md:top-[5px]">
-                      <Button
-                        variant="small"
-                        onClick={() => {
-                          // dispatch(fetchAddress());
-                        }}
+            <div class="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Field
+                mode="input"
+                name="address"
+                formHandler={formHandler}
+                render={(field) => (
+                  <>
+                    <label for={field.props.id} class="sm:basis-40">
+                      Address
+                    </label>
+                    <div class="grow">
+                      <input
+                        {...field.props}
+                        class="input w-full"
                         disabled={isLoadingAddress || isSubmitting()}
-                      >
-                        Get position
-                      </Button>
-                    </span>
-                  </Show>
-                </>
-              )}
-            />
-          </div>
+                      />
+                      <Show when={field.helpers.error}>
+                        <p class="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700 transition-opacity transform opacity-100 scale-y-100">
+                          {field.helpers.errorMessage}
+                        </p>
+                      </Show>
+                    </div>
+                    <Show
+                      when={
+                        !user().position?.latitude &&
+                        !user().position?.longitude
+                      }
+                    >
+                      <span class="absolute right-[3px] top-[35px] z-50 sm:top-[3px] md:top-[5px]">
+                        <Button
+                          variant="small"
+                          onClick={() => {
+                            // dispatch(fetchAddress());
+                          }}
+                          disabled={isLoadingAddress || isSubmitting()}
+                        >
+                          Get position
+                        </Button>
+                      </span>
+                    </Show>
+                  </>
+                )}
+              />
+            </div>
 
-          <div class="mb-12 flex items-center gap-5">
-            <Field
-              mode="checkbox"
-              name="priority"
-              formHandler={formHandler}
-              render={(field) => (
-                <>
-                  <input
-                    class="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
-                    {...field.props}
-                    disabled={isSubmitting()}
-                    type="checkbox"
-                  />
-                  <label for={field.props.id} class="font-medium">
-                    Want to yo give your order priority?
-                  </label>
-                </>
-              )}
-            />
-          </div>
+            <div class="mb-12 flex items-center gap-5">
+              <Field
+                mode="checkbox"
+                name="priority"
+                formHandler={formHandler}
+                render={(field) => (
+                  <>
+                    <input
+                      class="h-6 w-6 accent-yellow-400 focus:outline-none focus:ring focus:ring-yellow-400 focus:ring-offset-2"
+                      {...field.props}
+                      disabled={isSubmitting()}
+                      type="checkbox"
+                    />
+                    <label for={field.props.id} class="font-medium">
+                      Want to yo give your order priority?
+                    </label>
+                  </>
+                )}
+              />
+            </div>
 
-          <div>
-            {/* <Field
+            <div>
+              {/* <Field
               mode="input"
               name="cart"
               value={JSON.stringify(cart())}
@@ -283,26 +283,27 @@ function NewOrder() {
               render={(field) => <input {...field.props} type="hidden" />}
             /> */}
 
-            <Button
-              disabled={
-                isSubmitting() ||
-                isLoadingAddress ||
-                formHandler.isFormInvalid()
-              }
-              variant="primary"
-              type="submit"
-            >
-              {isSubmitting()
-                ? 'Placing order....'
-                : `Order now from ${formatCurrency(totalPrice())}`}
-            </Button>
-          </div>
+              <Button
+                disabled={
+                  isSubmitting() ||
+                  isLoadingAddress ||
+                  formHandler.isFormInvalid()
+                }
+                variant="primary"
+                type="submit"
+              >
+                {isSubmitting()
+                  ? 'Placing order....'
+                  : `Order now from ${formatCurrency(totalPrice())}`}
+              </Button>
+            </div>
 
-          {/* {blocker.state === 'blocked' ? (
+            {/* {blocker.state === 'blocked' ? (
           <NavigationDialog blocker={blocker} />
         ) : null} */}
-        </form>
-      </div>
+          </form>
+        </div>
+      </Show>
     </>
   );
 }
