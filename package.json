@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@nanostores/solid": "^0.4.2",
+    "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.13.3",
     "nanostores": "^0.10.3",
     "solid-form-handler": "^1.2.3",

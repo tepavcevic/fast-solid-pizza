@@ -1,5 +1,7 @@
+import { Title } from '@solidjs/meta';
 import { Params, createAsync } from '@solidjs/router';
 import { For, Show } from 'solid-js';
+
 import Loader from '../../components/loader';
 import Button from '../../components/button';
 import OrderItem from '../../features/order/order-item';
@@ -43,76 +45,80 @@ function Order(props: { params: Params }) {
   return (
     <Show when={order()} fallback={<Loader />}>
       {(orderView) => (
-        <div class="space-y-8 px-4 py-6">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h2 class="text-xl font-semibold">
-              Order #{orderView().id} status
-            </h2>
+        <>
+          <Title>Order #{orderView().id} | Fast Solid Pizza Co.</Title>
+          <div class="space-y-8 px-4 py-6">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h2 class="text-xl font-semibold">
+                Order #{orderView().id} status
+              </h2>
 
-            <div class="space-x-2">
-              <Show when={orderView().priority}>
-                <span class="rounded-full bg-red-500 p-1 text-sm font-semibold uppercase tracking-wide text-red-50">
-                  Priority
+              <div class="space-x-2">
+                <Show when={orderView().priority}>
+                  <span class="rounded-full bg-red-500 p-1 text-sm font-semibold uppercase tracking-wide text-red-50">
+                    Priority
+                  </span>
+                </Show>
+                <span class="rounded-full bg-green-500 p-1 text-sm font-semibold uppercase tracking-wide text-green-50">
+                  {orderView().status} order
                 </span>
-              </Show>
-              <span class="rounded-full bg-green-500 p-1 text-sm font-semibold uppercase tracking-wide text-green-50">
-                {orderView().status} order
-              </span>
+              </div>
             </div>
-          </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-stone-200 px-6 py-5">
-            <p class="font-medium">
-              {calcMinutesLeft(orderView().estimatedDelivery) >= 0
-                ? `Only ${calcMinutesLeft(orderView().estimatedDelivery)} minutes left 😃`
-                : 'Order should have arrived'}
-            </p>
-            <p class="text-xs text-stone-500">
-              (Estimated delivery: {formatDate(orderView().estimatedDelivery)})
-            </p>
-          </div>
-
-          <ul class="divide-y divide-stone-200 border-b border-t">
-            <For each={orderView().cart}>
-              {(item: CartItemType) => (
-                <OrderItem
-                  item={item}
-                  isLoadingIngredients={!menu()}
-                  ingredients={
-                    menu()?.find(
-                      (element: { id: number }) => element.id === item.pizzaId
-                    )?.ingredients
-                  }
-                />
-              )}
-            </For>
-          </ul>
-
-          <div class="space-y-2 bg-stone-200 px-6 py-5">
-            <p class="text-sm font-medium text-stone-600">
-              Price pizza: {formatCurrency(orderView().orderPrice)}
-            </p>
-            <Show when={orderView().priority}>
-              <p class="text-sm font-medium text-stone-600">
-                Price priority: {formatCurrency(orderView().priorityPrice)}
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-stone-200 px-6 py-5">
+              <p class="font-medium">
+                {calcMinutesLeft(orderView().estimatedDelivery) >= 0
+                  ? `Only ${calcMinutesLeft(orderView().estimatedDelivery)} minutes left 😃`
+                  : 'Order should have arrived'}
               </p>
-            </Show>
-            <p class="font-bold">
-              To pay on delivery:{' '}
-              {formatCurrency(
-                orderView().orderPrice + orderView().priorityPrice
-              )}
-            </p>
-          </div>
-
-          <Show when={!orderView().priority}>
-            <div class="text-end">
-              <Button variant="primary" disabled={isMakingPriority}>
-                {isMakingPriority ? 'Making Priority...' : 'Make Priority'}
-              </Button>
+              <p class="text-xs text-stone-500">
+                (Estimated delivery: {formatDate(orderView().estimatedDelivery)}
+                )
+              </p>
             </div>
-          </Show>
-        </div>
+
+            <ul class="divide-y divide-stone-200 border-b border-t">
+              <For each={orderView().cart}>
+                {(item: CartItemType) => (
+                  <OrderItem
+                    item={item}
+                    isLoadingIngredients={!menu()}
+                    ingredients={
+                      menu()?.find(
+                        (element: { id: number }) => element.id === item.pizzaId
+                      )?.ingredients
+                    }
+                  />
+                )}
+              </For>
+            </ul>
+
+            <div class="space-y-2 bg-stone-200 px-6 py-5">
+              <p class="text-sm font-medium text-stone-600">
+                Price pizza: {formatCurrency(orderView().orderPrice)}
+              </p>
+              <Show when={orderView().priority}>
+                <p class="text-sm font-medium text-stone-600">
+                  Price priority: {formatCurrency(orderView().priorityPrice)}
+                </p>
+              </Show>
+              <p class="font-bold">
+                To pay on delivery:{' '}
+                {formatCurrency(
+                  orderView().orderPrice + orderView().priorityPrice
+                )}
+              </p>
+            </div>
+
+            <Show when={!orderView().priority}>
+              <div class="text-end">
+                <Button variant="primary" disabled={isMakingPriority}>
+                  {isMakingPriority ? 'Making Priority...' : 'Make Priority'}
+                </Button>
+              </div>
+            </Show>
+          </div>
+        </>
       )}
     </Show>
   );

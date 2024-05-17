@@ -1,4 +1,5 @@
 import { For, Suspense } from 'solid-js';
+import { Title } from '@solidjs/meta';
 
 import { createAsyncStore } from '@solidjs/router';
 import { getMenu } from '../../services/apiRestaurant';
@@ -13,13 +14,16 @@ function Menu() {
   });
 
   return (
-    <Suspense fallback={<Loader />}>
-      <ul class="divide-y divide-stone-200 px-2">
-        <For each={menu()}>
-          {(pizza: Product) => <MenuItem pizza={pizza} />}
-        </For>
-      </ul>
-    </Suspense>
+    <>
+      <Title>Menu | Fast Solid Pizza Co.</Title>
+      <Suspense fallback={<Loader />}>
+        <ul class="divide-y divide-stone-200 px-2">
+          <For each={menu()}>
+            {(pizza: Product) => <MenuItem pizza={pizza} />}
+          </For>
+        </ul>
+      </Suspense>
+    </>
   );
 }
 

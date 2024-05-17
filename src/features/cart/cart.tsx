@@ -1,5 +1,6 @@
 import { For, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
+import { Title } from '@solidjs/meta';
 
 import { cart, clearCart } from '../../store/cart';
 import { user } from '../../store/users';
@@ -16,31 +17,34 @@ function Cart() {
   const handleClearCart = () => clearCart();
 
   return (
-    <Show when={storedCart().length > 0} fallback={<EmptyCart />}>
-      <div class="px-4 py-3">
-        <LinkButton to="/menu">&larr; Back to menu</LinkButton>
+    <>
+      <Title>Cart | Fast Solid Pizza Co.</Title>
+      <Show when={storedCart().length > 0} fallback={<EmptyCart />}>
+        <div class="px-4 py-3">
+          <LinkButton to="/menu">&larr; Back to menu</LinkButton>
 
-        <h2 class="mt-7 text-xl font-semibold">
-          Your cart, {storedUser().username}
-        </h2>
+          <h2 class="mt-7 text-xl font-semibold">
+            Your cart, {storedUser().username}
+          </h2>
 
-        <ul class="mt-3 divide-y divide-stone-200 border-b">
-          <For each={storedCart()}>
-            {(item: CartItemType) => <CartItem item={item} />}
-          </For>
-        </ul>
+          <ul class="mt-3 divide-y divide-stone-200 border-b">
+            <For each={storedCart()}>
+              {(item: CartItemType) => <CartItem item={item} />}
+            </For>
+          </ul>
 
-        <div class="mt-10 space-x-2">
-          <Button variant="primary" to="/order/new">
-            Order pizzas
-          </Button>
+          <div class="mt-10 space-x-2">
+            <Button variant="primary" to="/order/new">
+              Order pizzas
+            </Button>
 
-          <Button variant="secondary" onClick={handleClearCart}>
-            Clear cart
-          </Button>
+            <Button variant="secondary" onClick={handleClearCart}>
+              Clear cart
+            </Button>
+          </div>
         </div>
-      </div>
-    </Show>
+      </Show>
+    </>
   );
 }
 

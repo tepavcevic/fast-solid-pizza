@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { useStore } from '@nanostores/solid';
 import { useIsRouting, useNavigate } from '@solidjs/router';
 import { Show, createEffect, createSignal, onMount } from 'solid-js';
+import { Title } from '@solidjs/meta';
 
 import Loader from '../../components/loader';
 import Button from '../../components/button';
@@ -116,9 +117,9 @@ function NewOrder() {
         void formHandler.resetForm().then(() => {
           // eslint-disable-next-line no-void
           void createOrder(order).then((newOrder) => {
-            clearCart();
-            setIsSubmitting(false);
             navigate(`/order/${newOrder.id}`);
+            setIsSubmitting(false);
+            clearCart();
           });
         });
       });
@@ -132,7 +133,8 @@ function NewOrder() {
   // if (!cart.length && navigation.state === 'idle') return <EmptyCart />;
 
   return (
-    <Show when={!isRouting()} fallback={<Loader />}>
+    <>
+      <Title>Order | Fast Solid Pizza Co.</Title>
       <div class="px-4 py-6">
         <h2 class="mb-8 text-xl font-semibold">
           Ready to order? Let&apos;s go!
@@ -301,7 +303,7 @@ function NewOrder() {
         ) : null} */}
         </form>
       </div>
-    </Show>
+    </>
   );
 }
 
