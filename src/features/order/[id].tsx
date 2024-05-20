@@ -2,16 +2,16 @@ import { Title } from '@solidjs/meta';
 import { Params, createAsync } from '@solidjs/router';
 import { For, Show } from 'solid-js';
 
-import { CartItem as CartItemType } from '#src/types/order';
 import Button from '#src/components/button';
 import Loader from '#src/components/loader';
+import OrderItem from '#src/features/order/order-item';
 import { getMenu, getOrder } from '#src/services/apiRestaurant';
+import { CartItem as CartItemType } from '#src/types/order';
 import {
   calcMinutesLeft,
-  formatDate,
   formatCurrency,
+  formatDate,
 } from '#src/utils/helpers';
-import OrderItem from '#src/features/order/order-item';
 
 // const updatePriority = action(async (data: { orderId: string }) => {
 //   // eslint-disable-next-line @typescript-eslint/no-throw-literal
@@ -68,7 +68,9 @@ function Order(props: { params: Params }) {
             <div class="flex flex-wrap items-center justify-between gap-2 bg-stone-200 px-6 py-5">
               <p class="font-medium">
                 {calcMinutesLeft(orderView().estimatedDelivery) >= 0
-                  ? `Only ${calcMinutesLeft(orderView().estimatedDelivery)} minutes left 😃`
+                  ? `Only ${calcMinutesLeft(
+                      orderView().estimatedDelivery
+                    )} minutes left 😃`
                   : 'Order should have arrived'}
               </p>
               <p class="text-xs text-stone-500">

@@ -1,6 +1,6 @@
-import { atom, computed } from 'nanostores';
+import { atom, computed } from "nanostores";
 
-import { CartItem } from '#src/types/order';
+import { CartItem } from "#src/types/order";
 
 export const cart = atom<Array<CartItem>>([]);
 
@@ -16,7 +16,9 @@ export const clearCart = () => {
 export const increaseCartItemQuantity = (id: number) => {
   const itemToIncrease = cart.get().find((cartItem) => cartItem.pizzaId === id);
 
-  if (!itemToIncrease) return;
+  if (!itemToIncrease) {
+    return;
+  }
 
   cart.set(
     cart.get().map((cartItem) => {
@@ -28,13 +30,15 @@ export const increaseCartItemQuantity = (id: number) => {
         };
       }
       return cartItem;
-    })
+    }),
   );
 };
 export const decreaseCartItemQuantity = (id: number) => {
   const itemToDecrease = cart.get().find((cartItem) => cartItem.pizzaId === id);
 
-  if (!itemToDecrease) return;
+  if (!itemToDecrease) {
+    return;
+  }
 
   cart.set(
     cart.get().map((cartItem) => {
@@ -46,7 +50,7 @@ export const decreaseCartItemQuantity = (id: number) => {
         };
       }
       return cartItem;
-    })
+    }),
   );
 
   if (cart.get().filter((cartItem) => cartItem.quantity > 0).length === 0) {
@@ -55,13 +59,13 @@ export const decreaseCartItemQuantity = (id: number) => {
 };
 
 export const getTotalCartQuantity = computed(cart, (storeCart) =>
-  storeCart.reduce((acc, curr) => acc + curr.quantity, 0)
+  storeCart.reduce((acc, curr) => acc + curr.quantity, 0),
 );
 export const getTotalCartPrice = computed(cart, (storeCart) =>
-  storeCart.reduce((acc, curr) => acc + curr.totalPrice, 0)
+  storeCart.reduce((acc, curr) => acc + curr.totalPrice, 0),
 );
 export const getCurrentQuantityById = (id: number) =>
   computed(
     cart,
-    (storeCart) => storeCart.find((item) => item.pizzaId === id)?.quantity ?? 0
+    (storeCart) => storeCart.find((item) => item.pizzaId === id)?.quantity ?? 0,
   );

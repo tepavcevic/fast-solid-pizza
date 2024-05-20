@@ -1,16 +1,18 @@
-import { useNavigate } from '@solidjs/router';
-import { createSignal } from 'solid-js';
+import { useNavigate } from "@solidjs/router";
+import { createSignal } from "solid-js";
 
 export default function SearchOrder() {
-  const [query, setQuery] = createSignal('');
+  const [query, setQuery] = createSignal("");
   const navigate = useNavigate();
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
-    if (!query()) return;
+    if (!query()) {
+      return;
+    }
 
     navigate(`/order/${query()}`);
-    setQuery('');
+    setQuery("");
   };
 
   return (

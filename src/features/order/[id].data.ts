@@ -1,13 +1,12 @@
-import { RouteLoadFuncArgs, redirect } from '@solidjs/router';
+import { RouteLoadFuncArgs, redirect } from "@solidjs/router";
 
-import { getOrder } from '#src/services/apiRestaurant';
+import { getOrder } from "#src/services/apiRestaurant";
 
 const orderData = ({ params }: RouteLoadFuncArgs) => {
   if (!params.id) {
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw redirect('/menu');
+    throw redirect("/menu");
   }
-  // eslint-disable-next-line no-void
+  // biome-ignore lint/complexity/noVoid: <explanation>
   void getOrder(params.id);
 };
 

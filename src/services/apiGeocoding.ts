@@ -1,4 +1,4 @@
-import { Location } from '#src/types/location';
+import { Location } from "#src/types/location";
 
 // eslint-disable-next-line import/prefer-default-export
 export async function getAddress({
@@ -9,10 +9,11 @@ export async function getAddress({
   longitude: number;
 }): Promise<Location> {
   const res = await fetch(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}`
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}`,
   );
-  if (!res.ok) throw Error('Failed getting address');
-
+  if (!res.ok) {
+    throw Error("Failed getting address");
+  }
   const data = (await res.json()) as Location;
   return data;
 }

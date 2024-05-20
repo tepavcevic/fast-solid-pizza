@@ -1,46 +1,50 @@
-import { Field, useFormHandler } from 'solid-form-handler';
-import { zodSchema } from 'solid-form-handler/zod';
-import { z } from 'zod';
-import { useStore } from '@nanostores/solid';
-import { useNavigate } from '@solidjs/router';
-import { Show, createEffect, createSignal, onMount } from 'solid-js';
-import { Title } from '@solidjs/meta';
+import { useStore } from "@nanostores/solid";
+import { Title } from "@solidjs/meta";
+import { useNavigate } from "@solidjs/router";
+import { Field, useFormHandler } from "solid-form-handler";
+import { zodSchema } from "solid-form-handler/zod";
+import { Show, createEffect, createSignal, onMount } from "solid-js";
+import { z } from "zod";
 
+import Button from "#src/components/button";
+import EmptyCart from "#src/features/cart/empty-cart";
+import { createOrder } from "#src/services/apiRestaurant";
 import {
   clearCart,
   getTotalCartPrice,
   cart as storeCart,
-} from '#src/store/cart';
-import { user as storeUser } from '#src/store/users';
-import Button from '#src/components/button';
-import { CartItem, Order } from '#src/types/order';
-import { createOrder } from '#src/services/apiRestaurant';
-import { formatCurrency } from '#src/utils/helpers';
-import EmptyCart from '#src/features/cart/empty-cart';
+} from "#src/store/cart";
+import { user as storeUser } from "#src/store/users";
+import { CartItem, Order } from "#src/types/order";
+import { formatCurrency } from "#src/utils/helpers";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str
+    str,
   );
 
 const OrderSchema = z.object({
   customer: z
-    .string({ required_error: 'Please give us your name.' })
-    .min(3, { message: 'Minimum length of 3' })
-    .max(50, { message: 'Maximum length of 50' }),
+    // biome-ignore lint/style/useNamingConvention: <explanation>
+    .string({ required_error: "Please give us your name." })
+    .min(3, { message: "Minimum length of 3" })
+    .max(50, { message: "Maximum length of 50" }),
   phone: z
     .string({
-      required_error: 'Please give us your phone number.',
+      // biome-ignore lint/style/useNamingConvention: <explanation>
+      required_error: "Please give us your phone number.",
     })
     .refine(isValidPhone, {
       message:
-        'Please give us your correct phone number. We might need it to contact you.',
+        "Please give us your correct phone number. We might need it to contact you.",
     }),
   address: z
-    .string({ required_error: 'Please give us your address.' })
-    .min(3, { message: 'Minimum length of 3' })
-    .max(50, { message: 'Maximum length of 70' }),
+
+    // biome-ignore lint/style/useNamingConvention: <explanation>
+    .string({ required_error: "Please give us your address." })
+    .min(3, { message: "Minimum length of 3" })
+    .max(50, { message: "Maximum length of 70" }),
   position: z.string().optional(),
   // cart: z.string(),
   priority: z.boolean().optional(),
@@ -70,18 +74,18 @@ function NewOrder() {
   const navigate = useNavigate();
 
   const user = useStore(storeUser);
-  const isLoadingAddress = user().addressStatus === 'loading';
+  const isLoadingAddress = user().addressStatus === "loading";
 
   const formHandler = useFormHandler(zodSchema(OrderSchema), {
-    validateOn: ['blur', 'input'],
+    validateOn: ["blur", "input"],
   });
   const { formData } = formHandler;
 
   onMount(() => {
-    // eslint-disable-next-line no-void
-    void formHandler.setFieldDefaultValue('customer', user().username);
-    // eslint-disable-next-line no-void
-    void formHandler.setFieldDefaultValue('priority', false);
+    // biome-ignore lint/complexity/noVoid: <explanation>
+    void formHandler.setFieldDefaultValue("customer", user().username);
+    // biome-ignore lint/complexity/noVoid: <explanation>
+    void formHandler.setFieldDefaultValue("priority", false);
   });
 
   const cart = useStore(storeCart);
@@ -89,7 +93,7 @@ function NewOrder() {
 
   const [totalPrice, setTotalPrice] = createSignal(totalCartPrice());
   createEffect(() => {
-    const priorityPrice = formHandler.getFieldValue('priority')
+    const priorityPrice = formHandler.getFieldValue("priority")
       ? totalCartPrice() * 0.2
       : 0;
     setTotalPrice(totalCartPrice() + priorityPrice);
@@ -100,7 +104,7 @@ function NewOrder() {
     event.preventDefault();
 
     try {
-      // eslint-disable-next-line no-void
+      // biome-ignore lint/complexity/noVoid: <explanation>
       void formHandler.validateForm().then(() => {
         const order = {
           ...JSON.parse(JSON.stringify(formData())),
@@ -108,13 +112,13 @@ function NewOrder() {
           position:
             user().position.latitude && user().position.longitude
               ? `${user().position.latitude},${user().position.longitude}`
-              : '',
-          priority: Boolean(formHandler.getFieldValue('priority')),
+              : "",
+          priority: Boolean(formHandler.getFieldValue("priority")),
         } as Order;
 
-        // eslint-disable-next-line no-void
+        // biome-ignore lint/complexity/noVoid: <explanation>
         void formHandler.resetForm().then(() => {
-          // eslint-disable-next-line no-void
+          // biome-ignore lint/complexity/noVoid: <explanation>
           void createOrder(order).then((newOrder) => {
             navigate(`/order/${newOrder.id}`);
             setIsSubmitting(false);
@@ -292,7 +296,7 @@ function NewOrder() {
                 type="submit"
               >
                 {isSubmitting()
-                  ? 'Placing order....'
+                  ? "Placing order...."
                   : `Order now from ${formatCurrency(totalPrice())}`}
               </Button>
             </div>

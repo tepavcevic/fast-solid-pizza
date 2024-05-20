@@ -1,7 +1,7 @@
-import { getMenu } from '#src/services/apiRestaurant';
+import { getMenu } from "#src/services/apiRestaurant";
 
 const menuData = () => {
-  // eslint-disable-next-line no-void
+  // biome-ignore lint/complexity/noVoid: <explanation>
   void getMenu();
 };
 

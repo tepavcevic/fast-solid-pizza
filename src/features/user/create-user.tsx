@@ -1,6 +1,6 @@
 import { useNavigate } from '@solidjs/router';
-import { createSignal } from 'solid-js';
 
+import { createSignal } from 'solid-js';
 import Button from '#src/components/button';
 import { updateName } from '#src/store/users';
 
@@ -11,7 +11,9 @@ function CreateUser() {
   function handleSubmit(e: Event) {
     e.preventDefault();
 
-    if (!username()) return;
+    if (!username()) {
+      return;
+    }
     updateName(username());
     navigate('/menu');
   }

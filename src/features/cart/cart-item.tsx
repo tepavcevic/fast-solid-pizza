@@ -1,8 +1,8 @@
-import { getCurrentQuantityById } from '#src/store/cart';
-import { formatCurrency } from '#src/utils/helpers';
-import { CartItem as CartItemType } from '#src/types/order';
 import DeleteItem from '#src/features/cart/delete-item';
 import UpdateItemQuantity from '#src/features/cart/update-item-quantity';
+import { getCurrentQuantityById } from '#src/store/cart';
+import { CartItem as CartItemType } from '#src/types/order';
+import { formatCurrency } from '#src/utils/helpers';
 
 function CartItem(props: { item: CartItemType }) {
   return (
