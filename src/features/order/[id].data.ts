@@ -1,5 +1,6 @@
 import { RouteLoadFuncArgs, redirect } from '@solidjs/router';
-import { getOrder } from '../../services/apiRestaurant';
+
+import { getOrder } from '#src/services/apiRestaurant';
 
 const orderData = ({ params }: RouteLoadFuncArgs) => {
   if (!params.id) {

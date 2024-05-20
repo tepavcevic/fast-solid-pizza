@@ -1,4 +1,4 @@
-import { getMenu } from '../../services/apiRestaurant';
+import { getMenu } from '#src/services/apiRestaurant';
 
 const menuData = () => {
   // eslint-disable-next-line no-void

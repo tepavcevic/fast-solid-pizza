@@ -1,9 +1,9 @@
 import { useStore } from '@nanostores/solid';
 import { Title } from '@solidjs/meta';
 
-import Button from './button';
-import CreateUser from '../features/user/create-user';
-import { user } from '../store/users';
+import Button from '#src/components/button';
+import CreateUser from '#src/features/user/create-user';
+import { user } from '#src/store/users';
 
 const Home = () => {
   const storedUser = useStore(user);

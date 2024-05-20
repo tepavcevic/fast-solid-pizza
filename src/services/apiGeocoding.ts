@@ -1,4 +1,4 @@
-import { Location } from '../types/location';
+import { Location } from '#src/types/location';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function getAddress({

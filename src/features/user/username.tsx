@@ -1,6 +1,7 @@
-import { Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import { user } from '../../store/users';
+import { Show } from 'solid-js';
+
+import { user } from '#src/store/users';
 
 export default function Username() {
   const storedUser = useStore(user);

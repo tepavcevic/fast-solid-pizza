@@ -1,11 +1,11 @@
 import { For, Suspense } from 'solid-js';
 import { Title } from '@solidjs/meta';
-
 import { createAsyncStore } from '@solidjs/router';
-import { getMenu } from '../../services/apiRestaurant';
-import Loader from '../../components/loader';
-import { Product } from '../../types/products';
-import MenuItem from './menu-item';
+
+import Loader from '#src/components/loader';
+import { getMenu } from '#src/services/apiRestaurant';
+import { Product } from '#src/types/products';
+import MenuItem from '#src/features/menu/menu-item';
 
 function Menu() {
   const menu = createAsyncStore(() => getMenu(), {

@@ -1,4 +1,4 @@
-import LinkButton from '../../components/link-button';
+import LinkButton from '#src/components/link-button';
 
 function EmptyCart() {
   return (

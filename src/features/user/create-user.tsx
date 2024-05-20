@@ -1,8 +1,8 @@
-import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
+import { createSignal } from 'solid-js';
 
-import Button from '../../components/button';
-import { updateName } from '../../store/users';
+import Button from '#src/components/button';
+import { updateName } from '#src/store/users';
 
 function CreateUser() {
   const [username, setUsername] = createSignal('');

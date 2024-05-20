@@ -1,6 +1,7 @@
 import { cache } from '@solidjs/router';
-import { Order, OrderView } from '../types/order';
-import { Product } from '../types/products';
+
+import { Order, OrderView } from '#src/types/order';
+import { Product } from '#src/types/products';
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 

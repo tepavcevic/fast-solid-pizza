@@ -1,11 +1,12 @@
-import { Show, createEffect, createSignal } from 'solid-js';
 import { useStore } from '@nanostores/solid';
-import Button from '../../components/button';
-import { formatCurrency } from '../../utils/helpers';
-import { Product } from '../../types/products';
-import { addToCart, getCurrentQuantityById } from '../../store/cart';
-import DeleteItem from '../cart/delete-item';
-import UpdateItemQuantity from '../cart/update-item-quantity';
+import { Show, createEffect, createSignal } from 'solid-js';
+
+import Button from '#src/components/button';
+import DeleteItem from '#src/features/cart/delete-item';
+import UpdateItemQuantity from '#src/features/cart/update-item-quantity';
+import { addToCart, getCurrentQuantityById } from '#src/store/cart';
+import { Product } from '#src/types/products';
+import { formatCurrency } from '#src/utils/helpers';
 
 function MenuItem(props: { pizza: Product }) {
   const [currentQuantity, setCurrentQuantity] = createSignal(0);

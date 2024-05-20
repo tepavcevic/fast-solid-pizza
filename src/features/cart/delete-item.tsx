@@ -1,5 +1,5 @@
-import Button from '../../components/button';
-import { removeFromCart } from '../../store/cart';
+import Button from '#src/components/button';
+import { removeFromCart } from '#src/store/cart';
 
 export default function DeleteItem(props: { id: number }) {
   const handleDeleteItem = () => removeFromCart(props.id);

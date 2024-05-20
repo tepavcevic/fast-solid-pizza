@@ -2,15 +2,15 @@ import { MetaProvider } from '@solidjs/meta';
 import { Route, Router } from '@solidjs/router';
 import type { Component } from 'solid-js';
 
-import AppLayout from './components/app-layout';
-import Home from './components/home';
-import NotFound from './components/not-found';
-import Cart from './features/cart/cart';
-import Menu from './features/menu/menu';
+import AppLayout from '#src/components/app-layout';
+import Home from '#src/components/home';
+import NotFound from '#src/components/not-found';
+import Cart from '#src/features/cart/cart';
+import Menu from '#src/features/menu/menu';
+import Order from '#src/features/order/[id]';
+import NewOrder from '#src/features/order/newOrder';
 import menuData from './features/menu/menu.data';
-import Order from './features/order/[id]';
 import orderData from './features/order/[id].data';
-import NewOrder from './features/order/newOrder';
 
 const App: Component = () => {
   return (

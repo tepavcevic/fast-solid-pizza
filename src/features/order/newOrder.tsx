@@ -2,22 +2,21 @@ import { Field, useFormHandler } from 'solid-form-handler';
 import { zodSchema } from 'solid-form-handler/zod';
 import { z } from 'zod';
 import { useStore } from '@nanostores/solid';
-import { useIsRouting, useNavigate } from '@solidjs/router';
+import { useNavigate } from '@solidjs/router';
 import { Show, createEffect, createSignal, onMount } from 'solid-js';
 import { Title } from '@solidjs/meta';
 
-import Loader from '../../components/loader';
-import Button from '../../components/button';
 import {
   clearCart,
   getTotalCartPrice,
   cart as storeCart,
-} from '../../store/cart';
-import { user as storeUser } from '../../store/users';
-import { formatCurrency } from '../../utils/helpers';
-import { CartItem, Order } from '../../types/order';
-import { createOrder } from '../../services/apiRestaurant';
-import EmptyCart from '../cart/empty-cart';
+} from '#src/store/cart';
+import { user as storeUser } from '#src/store/users';
+import Button from '#src/components/button';
+import { CartItem, Order } from '#src/types/order';
+import { createOrder } from '#src/services/apiRestaurant';
+import { formatCurrency } from '#src/utils/helpers';
+import EmptyCart from '#src/features/cart/empty-cart';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>

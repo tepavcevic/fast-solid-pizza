@@ -2,16 +2,16 @@ import { Title } from '@solidjs/meta';
 import { Params, createAsync } from '@solidjs/router';
 import { For, Show } from 'solid-js';
 
-import Loader from '../../components/loader';
-import Button from '../../components/button';
-import OrderItem from '../../features/order/order-item';
-import { getMenu, getOrder } from '../../services/apiRestaurant';
-import { CartItem as CartItemType } from '../../types/order';
+import { CartItem as CartItemType } from '#src/types/order';
+import Button from '#src/components/button';
+import Loader from '#src/components/loader';
+import { getMenu, getOrder } from '#src/services/apiRestaurant';
 import {
   calcMinutesLeft,
-  formatCurrency,
   formatDate,
-} from '../../utils/helpers';
+  formatCurrency,
+} from '#src/utils/helpers';
+import OrderItem from '#src/features/order/order-item';
 
 // const updatePriority = action(async (data: { orderId: string }) => {
 //   // eslint-disable-next-line @typescript-eslint/no-throw-literal

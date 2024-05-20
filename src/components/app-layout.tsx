@@ -1,12 +1,12 @@
-import { ParentComponent, Show } from 'solid-js';
 import { Title } from '@solidjs/meta';
 import { useIsRouting } from '@solidjs/router';
+import { ParentComponent, Show } from 'solid-js';
 
-import CartOverview from '../features/cart/cart-overview';
-import Header from './header';
-import Loader from './loader';
+import Header from '#src/components/header';
+import Loader from '#src/components/loader';
+import CartOverview from '#src/features/cart/cart-overview';
 
-const Index: ParentComponent = (props) => {
+const AppLayout: ParentComponent = (props) => {
   const isRouting = useIsRouting();
   return (
     <>
@@ -25,4 +25,4 @@ const Index: ParentComponent = (props) => {
   );
 };
 
-export default Index;
+export default AppLayout;

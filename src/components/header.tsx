@@ -1,7 +1,7 @@
 import { A } from '@solidjs/router';
 
-import SearchOrder from '../features/order/search-order';
-import Username from '../features/user/username';
+import SearchOrder from '#src/features/order/search-order';
+import Username from '#src/features/user/username';
 
 export default function Header() {
   return (

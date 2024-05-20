@@ -1,5 +1,5 @@
-import { CartItem } from '../../types/order';
-import { formatCurrency } from '../../utils/helpers';
+import { CartItem } from '#src/types/order';
+import { formatCurrency } from '#src/utils/helpers';
 
 function OrderItem(props: {
   item: CartItem;

@@ -1,14 +1,14 @@
-import { For, Show } from 'solid-js';
 import { useStore } from '@nanostores/solid';
 import { Title } from '@solidjs/meta';
+import { For, Show } from 'solid-js';
 
-import { cart, clearCart } from '../../store/cart';
-import { user } from '../../store/users';
-import Button from '../../components/button';
-import LinkButton from '../../components/link-button';
-import CartItem from '../../features/cart/cart-item';
-import EmptyCart from '../../features/cart/empty-cart';
-import { CartItem as CartItemType } from '../../types/order';
+import Button from '#src/components/button';
+import LinkButton from '#src/components/link-button';
+import CartItem from '#src/features/cart/cart-item';
+import EmptyCart from '#src/features/cart/empty-cart';
+import { cart, clearCart } from '#src/store/cart';
+import { user } from '#src/store/users';
+import { CartItem as CartItemType } from '#src/types/order';
 
 function Cart() {
   const storedUser = useStore(user);
